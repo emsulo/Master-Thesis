@@ -1,0 +1,234 @@
+---
+title: "Master Thesis: \n Miscalibration due to heterogeneity in received treatment in prognostic models: a simulation study"
+author: "Emilia Löscher"
+output: html_document
+runtime: shiny
+---
+
+```{r prepare, echo = FALSE, warning = FALSE, message=FALSE}
+library(shiny)
+library(ggplot2)
+library(dplyr)
+library(psych)
+library(looplot)
+library(shinydashboard)
+
+my_palette <- c(rgb(1,205/255,0), rgb(192/255,10/255,53/255), rgb(0,0,0), 
+                rgb(35/255,109/255, 182/255), rgb(60/255, 150/255,50/255))
+my_palette  <-my_palette[c(3,2,4,1)]
+
+col_meas_list <- list("c-statistic" = c(13, 14), "Scaled Brier score" = c(15, 16), "Calibration-in-the-large Coefficient" = c(17, 18), "Calibration Slope" = c(19, 20))
+
+ylim_list_l <- list("c-statistic" = c(0.76, 0.825), "Scaled Brier score" = c(0.12, 0.35), "Calibration-in-the-large Coefficient" = c(-1.15, 0.72), "Calibration Slope" = c(0.7, 1.2))
+
+ylim_list_f <- list("c-statistic" = c(0.74, 0.825), "Scaled Brier score" = c(-0.05, 0.38), "Calibration-in-the-large Coefficient" = c(-1.45, 0.72), "Calibration Slope" = c(0.51, 1.2))
+
+steps_y_base_list_l <- list("c-statistic" = 0.77, "Scaled Brier score" = 0.14, "Calibration-in-the-large Coefficient" = -0.9, "Calibration Slope" = 0.74) 
+
+steps_y_base_list_f <- list("c-statistic" = 0.755, "Scaled Brier score" = 0, "Calibration-in-the-large Coefficient" = -1.05, "Calibration Slope" = 0.6) 
+
+
+steps_y_height_list <- list("c-statistic" = 0.002, "Scaled Brier score" = 0.005, "Calibration-in-the-large Coefficient" = 0.05, "Calibration Slope" = 0.01) 
+
+hline_intercept_list <- list("c-statistic" = 0.8, "Scaled Brier score" = NA, "Calibration-in-the-large Coefficient" = 0, "Calibration Slope" = 1)  
+
+
+```
+
+
+
+```{r ui, echo = FALSE}
+ui <- fluidPage(
+  
+  titlePanel("Results for predictive performance at external validation in case of treatment heterogeneity"),
+  sidebarLayout(
+    sidebarPanel(
+       selectInput("Study", "Simulation Study", choices = c("Large", "Finite"), multiple = FALSE, selected = c("Large")),
+      selectInput("Model", "Modeling Approach", choices = c("Ignore","Naive"), multiple = TRUE,
+                  selected = c("Ignore","Naive")),
+    selectInput("Setting", "Setting", choices = c("Validation"), multiple = TRUE,
+                 selected = c("Validation")),
+    selectInput("Measure", "Measure", choices= c("Calibration-in-the-large Coefficient", "Calibration Slope","c-statistic", "Scaled Brier score")),
+    
+   selectInput("ES", "Effect Size", choices = c("Decreasing","Equal", "Increasing"), multiple = TRUE, selected = c("Decreasing","Equal", "Increasing")),
+   selectInput("p", "Proportion",
+                choices = c("Decreasing","Equal", "Increasing"), multiple = TRUE, selected = c("Decreasing","Equal", "Increasing"))),
+      
+   mainPanel(
+        plotOutput("loopplot"))
+), responsive = FALSE)
+
+```
+
+
+```{r server, echo = FALSE}
+server <- function(input, output){
+  output$loopplot <- renderPlot({
+   
+   validate(
+     need(input$Study, "Please select a study"),
+     need(input$Setting, "Please select a setting"),
+     need(input$Model, "Please select a model"),
+     need(input$p, "Please select a change in proportion"),
+     need(input$ES, "Please select a change in effect size")
+)
+    sett <- sort(ifelse(input$Setting == "Validation",2,1))
+    print(sett)
+    col_sett <- ifelse(input$Setting == "Validation",c(6,8),c(5,7))
+    meas <- col_meas_list[[input$Measure]][sett]
+    
+    if(input$Study == "Large"){
+      load("./Results/res_sim_large.RData")
+      res <- res_sim_large$Results
+      res <- res %>% mutate(d_ES = round(abs(d_ES), 2), v_ES = round(abs(v_ES), 2))
+      ylim_list <- ylim_list_l
+      steps_y_base_list <- steps_y_base_list_l
+      
+    }else{
+      load("./Results/res_sim_finite.RData")
+      res <- res_sim_finite$Results
+      res <- res %>% mutate(d_ES = round(abs(d_ES), 2), v_ES = round(abs(v_ES), 2))
+      ylim_list <- ylim_list_f
+      steps_y_base_list <- steps_y_base_list_f
+    }
+    
+    
+     if(length(input$Model) == 2){
+        loop_data <- cbind(res[seq(from= 1, to = (nrow(res)-1), by = 2),c(3:6,meas)],res[seq(from= 2, to = nrow(res), by = 2),c(meas,1)])
+        colnames(loop_data)[5:6] <- c( "Ignore",  "Naive")
+        
+          if(sett == 1){
+            my_palette <- my_palette[c(2,4)]
+          }else{
+            my_palette <- my_palette[c(1,3)]
+          }
+          
+      }
+        else{
+       if(input$Model == "Ignore"){
+        loop_data <- res[seq(from= 1, to = (nrow(res)-1), by = 2),c(3:6,meas,1)]
+        colnames(loop_data)[5] <- "Ignore"
+      #  if(length(sett) == 2){
+    #     colnames(loop_data)[(5:6)] <- c("derivation_ignore", "Ignore" )[sett]
+     #  }else{
+      #   colnames(loop_data)[(4 + sett)] <- c("derivation_ignore", "Ignore" )[sett]
+       }
+        
+      
+      if(input$Model == "Naive"){
+       loop_data <- res[seq(from= 2, to = nrow(res), by = 2),c(3:6,meas,1)]
+       colnames(loop_data)[5] <- "Naive"
+       my_palette <- my_palette[3]
+      # if(length(sett) == 2){
+      #   colnames(loop_data)[(5:6)] <- c( "derivation_naive", "Naive")[sett]
+      # }else{
+      #   colnames(loop_data)[(5)] <- c( "derivation_naive", "Naive")[sett]
+      }
+      }
+      
+    
+    
+    
+    #Filtering for increasing, equal, decreasing proportion and effect strength
+    equal <- decr <- incr <- numeric()
+    if(sum(input$ES == "Equal") == 1){
+      equal <- which(loop_data$d_ES == loop_data$v_ES)
+    }
+    if(sum(input$ES == "Decreasing")== 1){
+      decr <- which(loop_data$d_ES < loop_data$v_ES)
+    }
+    if(sum(input$ES == "Increasing")== 1){
+      incr <- which(loop_data$d_ES > loop_data$v_ES)
+    }
+    loop_data <- loop_data[c(equal, decr, incr),]
+    
+    
+    #Filtering for increasing, equal, decreasing proportion and effect strength
+     equal <- decr <- incr <- numeric()
+    if(sum(input$p == "Equal") == 1){
+      equal <- which(loop_data$d_p == loop_data$v_p)
+    }
+    if(sum(input$p == "Decreasing")== 1){
+      decr <- which(loop_data$d_p > loop_data$v_p)
+    }
+    if(sum(input$p == "Increasing")== 1){
+      incr <- which(loop_data$d_p < loop_data$v_p)
+    }
+    loop_data <- loop_data[c(equal, decr, incr),]
+    
+    #Data used for the plot in case of large sample size study
+    loop_data_final <- loop_data %>% 
+      rename(ES_v = "v_ES", ES_d= "d_ES")
+     
+    
+    #Summarizing results per scenario for the finite sample size study
+    if(input$Study == "Finite"){
+      load("./Results/n_dist_scen_finite.RData")
+      if(length(input$Model)== 2){
+        loop_data_new <- loop_data %>% group_by(Scenario) %>%
+        dplyr::summarize(d_p = unique(d_p),d_ES = unique(d_ES), 
+                         v_p = unique(v_p), v_ES = unique(v_ES),Ignore = median(Ignore), Naive = median(Naive))
+        
+        loop_data_comb <- cbind(loop_data[,1:4], loop_data_new) 
+        #summarize(across(c(1:4), first),
+         #         across(c(5:(5+length(input$Model)-1)), median))
+      }
+      
+      if(length(input$Model) == 1){
+        if(input$Model == "Ignore"){
+          loop_data_new <- loop_data %>% group_by(Scenario) %>%
+        dplyr::summarize(d_p = unique(d_p),d_ES = unique(d_ES), 
+                         v_p = unique(v_p), v_ES = unique(v_ES), Ignore = median(Ignore))
+        }else{
+          loop_data_new <- loop_data %>% group_by(Scenario) %>%
+        dplyr::summarize(d_p = unique(d_p),d_ES = unique(d_ES), 
+                         v_p = unique(v_p), v_ES = unique(v_ES),Naive = median(Naive))
+        }
+        
+        
+        
+      }
+      loop_data_comb <- cbind(loop_data_new) 
+      #Data used for the plot in case of finite sample size study
+      loop_data_final <- loop_data_comb %>% 
+      rename(ES_v = "v_ES", ES_d= "d_ES")
+    }
+    
+    print(head(loop_data_final))
+    print(dim(loop_data_final))
+    #Plotting the loop-plot
+
+p_plot = nested_loop_plot(resdf = loop_data_final[,-which(colnames(loop_data_final) == "Scenario")], 
+                           x = "v_p", steps = "d_p",
+                           grid_rows = "ES_v", grid_cols = "ES_d", 
+                           steps_y_base = steps_y_base_list[[input$Measure]], steps_y_height = steps_y_height_list[[input$Measure]], 
+                         ylim = ylim_list[[input$Measure]],  
+                           x_name = expression(Validation~Proportion~(p[v])), y_name = input$Measure,
+                         steps_names = expression(p[d]),
+                           spu_x_shift = 1,
+                           colors =  my_palette,
+                           steps_values_annotate = TRUE, steps_annotation_size = 2.5, 
+                           hline_intercept = hline_intercept_list[[input$Measure]], 
+                           post_processing = list(
+                             add_custom_theme = list(
+                               axis.text.x = element_text(angle = -90, 
+                                                          vjust = 0.5, 
+                                                          size = 7) 
+                             )
+                           ))
+print(p_plot)
+  })
+  
+}
+```
+
+```{r build, echo = FALSE}
+shinyApp(
+  ui = ui, 
+  server = server
+)
+
+```
+
+
+

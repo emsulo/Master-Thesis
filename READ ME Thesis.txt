@@ -1,0 +1,144 @@
+READ ME - Master Thesis - Emilia Löscher
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!! Note that this README file is still in the works until 15.05.2023 !!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+This repository contains all files to re-create the Master Thesis  
+submitted on May 8, 2023.
+
+Below you can find a detailed description of the files included in this
+repository.
+
+##########
+# R CODE #
+##########
+
+TO BE OPENED IN AN R-Project NAMED "Thesis"!
+
+--- 0_Functions_Thesis.R ---
+- Functions needed for 1_Optimizations_Large.R and 1_Optimizations_Finite.R
+  . Intercept needed to obtain target treatment proportion in deviation popn. 
+     Large:	d_p_l = c(0.1, 0.5, 0.9)  
+     Finite:d_p = c(0.1,0.15, 0.5, 0.55, 0.9, 0.95)
+	loss_function_intercept()
+	intercept_optim()
+    comments in the file for details on defaults, input, and output
+
+  . Parameters to obtain a target: 
+     Large: AUC = 0.8, outcome proportion = 0.5,
+     Finite: AUC = 0.8, outcome proportion = 0.2, 
+    parameters of all predictors are constrained to be the same
+	AUC_grid()
+    comments in the file for details on defaults, input, and output
+
+- Function needed for 2_Simulation_Large.R and 2_Simulation_Finite.R
+  . Simulation study including generating the data, fitting the models,
+    getting performance measure results 
+	my_sim()
+    comments in the file for details on defaults, input, and output
+    
+
+--- 1_Optimization_Large.R --- (TAKES A LONG TIME TO RUN)
+- Optimizing intercept to obtain treatment proportion for LARGE scenario
+	target: treatment proportion of the respective (derivation) scenario
+	save as "res_intercept_large.RData" in Results sub-folder
+- Tuning parameters for targeted AUC and outcome proportion LARGE scenario 	
+	target: AUC = 0.8, outcome proportion = 0.5
+	save as "res_AUC_large.RData" in Results sub-folder
+
+
+--- 1_Optimization_Finite.R --- (TAKES A LONG TIME TO RUN)
+- Optimizing intercept to obtain treatment proportion for FINITE scenario
+	target: treatment proportion of the respective (derivation) scenario
+	save as "res_intercept_finite.RData" in Results sub-folder
+- Tuning parameters for targeted AUC and outcome proportion FINITE scenario 	
+	target: AUC = 0.8, outcome proportion = 0.2
+	save as "res_AUC_finite.RData" in Results sub-folder
+
+
+
+--- 2_Simulation_Large.R --- (TAKES A LONG TIME TO RUN)
+- Obtaining Simulation results using the results 
+	"res_AUC_large.RData" and "res_intercept_large.RData" from the Results folder
+	obtained by running 1_Optimizations_Large.R 
+- Running simulation for T depending on P
+	save as "res_sim_large.RData" in the Results sub-folder
+
+
+--- 2_Simulation_Finite.R --- (TAKES A LONG TIME TO RUN)
+- Obtaining Simulation results using the results 
+	"res_AUC_finite.RData" and "res_intercept_finite.RData" from the Results folder
+	obtained by running 1_Optimizations_Finite.R 
+- Running simulation for T depending on P
+	save as "res_sim_finite.RData" in the Results sub-folder
+
+
+--- 3_Result_Processing_Large.R ---
+- Code for creating plots using the results 
+	"res_sim_large" in the Results subfolder 
+	obtained by running 2_Simulation_Large.R 
+- 1) First overview, descriptives across all scenarios 
+- 2) Result processing and saving it under res_large_processed.RData
+
+
+
+
+--- 3_Result_Processing_Finite.R ---
+- Code for creating plots using the results 
+	"res_sim_finite" in the Results subfolder 
+	obtained by running 2_Simulation_Finite.R
+
+- 1) First overview, descriptives across all scenarios
+- 2) Result processing and saving under res_finite_processed.RData
+
+
+
+
+--- 4_Plots_Report.R ---
+- Plots included in the report (plots for constant proportion/effect size
+  for Calibration-in-the-large Coefficient and Calibration Slope
+- saved under Plots ending in _val.pdf
+
+
+
+--- 5_Appendix_Plots ---
+- Code to recreate the plots in the appendix
+- saved under Plots ending in _abs.pdf for small (finite) 
+  and _abs.png for large sample size
+
+
+--- 6_Supplementary_Tables ---
+- Code to generate the basic xtalbe output for LaTeX code used for the tables 
+  in the Supplementary Materials
+- resulting LaTeX code was manually adjusted for consistancy and readability purpose
+
+
+--- 6_Visualization_App.Rmd ---
+- Code for the Shiny App available at 
+   https://emilialoescher.shinyapps.io/6_visualization_app/
+- interactive loopplots
+
+
+
+#############
+# Documents #
+#############
+Master Thesis_Emilia Loscher.pdf
+- final compiled PDF document of the Master Thesis
+
+
+
+###########
+# Folders #
+###########
+Plots
+- folder containing all created plots for the report
+  and plots for the Supplementary Materials taken from (an older version of) the Shiny App 
+
+Results
+- containing results in RData format, details are provided above for 
+  each of the R files
+
+ 
