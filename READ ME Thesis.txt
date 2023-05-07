@@ -11,6 +11,8 @@ submitted on May 8, 2023.
 Below you can find a detailed description of the files included in this
 repository.
 
+AUC was used for variable names instead of c-statistic.
+
 ##########
 # R CODE #
 ##########
