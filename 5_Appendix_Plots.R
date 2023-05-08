@@ -68,7 +68,7 @@ int_prop <- res_l %>%
   geom_point(size = 1.2)+
   geom_hline(yintercept = 0, col= my_palette[2] )+
   facet_grid( `ES_d = ES_v`  ~  `v_p - d_p`, labeller = labeller(`ES_d = ES_v` =label_value, diff_p = label_value))+
-  labs(x = expression(Validation~Effect~Size~(ES[v])), 
+  labs(x = expression(Validation~Proportion~(p[v])), 
        y= "Calibration-in-the-large \n Coeffiecient",
        title = "Heterogeneity in Proportion",
        tag = "Constant Effect Size")+
@@ -121,7 +121,7 @@ slope_prop <- res_l %>%
   geom_point(size = 1.2)+
   geom_hline(yintercept = 1, col= my_palette[2] )+
   facet_grid( `ES_d = ES_v`  ~  `v_p - d_p`, labeller = labeller(`ES_d = ES_v` =label_value, diff_p = label_value))+
-  labs(x = expression(Validation~Effect~Size~(ES[v])), 
+  labs(x = expression(Validation~Proportion~(p[v])), 
        y= "Calibration Slope",
        title = "Heterogeneity in Proportion",
        tag = "Constant Effect Size")+
@@ -174,7 +174,7 @@ auc_prop <- res_l %>%
   geom_point(size = 1.2)+
   geom_hline(yintercept = 0.8, col= my_palette[2] )+
   facet_grid( `ES_d = ES_v`  ~  `v_p - d_p`, labeller = labeller(`ES_d = ES_v` =label_value, diff_p = label_value))+
-  labs(x = expression(Validation~Effect~Size~(ES[v])), 
+  labs(x = expression(Validation~Proportion~(p[v])), 
        y= "C-statistic",
        title = "Heterogeneity in Proportion",
        tag = "Constant Effect Size")+scale_color_manual(values = my_palette[c(3,4)])+
@@ -224,7 +224,7 @@ brier_prop <- res_l %>%
   geom_point(size = 1.2)+
   #geom_hline(yintercept = 1, col= my_palette[2] )+
   facet_grid( `ES_d = ES_v`  ~  `v_p - d_p`, labeller = labeller(`ES_d = ES_v` =label_value, diff_p = label_value))+
-  labs(x = expression(Validation~Effect~Size~(ES[v])), 
+  labs(x = expression(Validation~Proportion~(p[v])), 
        y= "Scaled Brier score",
        title = "Heterogeneity in Proportion",
        tag = "Constant Effect Size")+
@@ -284,7 +284,7 @@ int_prop_f <- res_f %>%
   geom_boxplot(outlier.size = 0.5, lwd = 0.4)+
   geom_hline(yintercept = 0, col= my_palette[2] )+
   facet_grid( `ES_d = ES_v` ~ `v_p - d_p`, labeller = labeller(`ES_d = ES_v` =label_value, diff_p = label_value))+
-  labs(x = expression(Derivation~Proportion~(p[d])), y= "Calibration-in-the-large \n Coefficient",
+  labs(x = expression(Validation~Proportion~(p[v])), y= "Calibration-in-the-large \n Coefficient",
        tag = "Constant Effect Size", title = "Heterogeneity in Proportion")+
   scale_color_manual(values = my_palette[c(3,4)])+
   theme_minimal()+
@@ -332,7 +332,7 @@ slope_prop_f <- res_f %>%
   geom_boxplot(outlier.size = 0.5, lwd = 0.4)+
   geom_hline(yintercept = 1, col= my_palette[2] )+
   facet_grid( `ES_d = ES_v` ~ `v_p - d_p`, labeller = labeller(`ES_d = ES_v` =label_value, diff_p = label_value))+
-  labs(x = expression(Derivation~Proportion~(p[d])), y= "Calibration Slope",
+  labs(x = expression(Validation~Proportion~(p[v])), y= "Calibration Slope",
        tag = "Effect Size", title = "Heterogeneity in Proportion")+
   scale_color_manual(values = my_palette[c(3,4)])+
   theme_minimal()+
