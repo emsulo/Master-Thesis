@@ -9,6 +9,42 @@ repository.
 
 AUC was used for variable and file names instead of c-statistic.
 
+
+#################################
+# Access/Responsibility/Contact #
+#################################
+The repository can be accessed via https://github.com/emsulo/Master-Thesis.
+I, Emilia Löscher, am responsible for the research archive and you can contact me via 
+e.s.loscher@students.uu.nl.
+
+
+###########################
+# Ethics/Privacy/Security #
+###########################
+- information on ethical approval is given in the document 
+	ETHICAL APPROVAL.txt
+- all data were simultated, hence, there are no privacy or security concerns
+
+
+################
+# Introduction #
+################
+Within this thesis project, a large and a small sample size study were performed.
+In both studies, parameters were obtimized to perform to ensure that the characteristics of the simulated data sets are in accordance with the scenarios of interest.
+For each scenario, data sets for derivation and validation were generated according to the respective scenario characteristics. Both modeling approaches (Ignore Treatment and Treatment-Naive) were used to build a model on the derivation data set. Both obtained models were applied to the derivation and validation data set and performance measures were saved. 
+
+The obtained results were processed and used for plot generation. 
+Please follow the steps under # R Code # and see comments within R files for more details.  
+
+
+########
+# Data #
+########
+All data were simulated within the simulation study and not saved externally.
+They can be reproduced by running the provided R code according to the instructions under 
+# R Code #.
+
+
 #############
 # Documents #
 #############
