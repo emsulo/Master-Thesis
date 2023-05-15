@@ -30,11 +30,11 @@ e.s.loscher@students.uu.nl.
 # Introduction #
 ################
 Within this thesis project, a large and a small sample size study were performed.
-In both studies, parameters were obtimized to perform to ensure that the characteristics of the simulated data sets are in accordance with the scenarios of interest.
+In both studies, parameters were obtimized to ensure that the characteristics of the simulated data sets are in accordance with the scenarios of interest.
 For each scenario, data sets for derivation and validation were generated according to the respective scenario characteristics. Both modeling approaches (Ignore Treatment and Treatment-Naive) were used to build a model on the derivation data set. Both obtained models were applied to the derivation and validation data set and performance measures were saved. 
 
-The obtained results were processed and used for plot generation. 
-Please follow the steps under # R Code # and see comments within R files for more details.  
+The obtained results for validation data sets were processed and used for plot generation. 
+Please follow the steps under # R Code # and see comments within the R files for more details.  
 
 
 ########
@@ -87,7 +87,7 @@ Results
 ##########
 Comments for details on defaults, input, and output can be found in the respective R-files.
 
-TO BE OPENED IN AN R-Project NAMED "Thesis" and RAN IN THE FOLLOWING ORDER:
+TO BE OPENED IN THE R-Project NAMED "Thesis" and RAN IN THE FOLLOWING ORDER:
 
 --- 0_Functions_Thesis.R ---
 - Functions needed for 1_Optimizations_Large.R and 1_Optimizations_Finite.R
